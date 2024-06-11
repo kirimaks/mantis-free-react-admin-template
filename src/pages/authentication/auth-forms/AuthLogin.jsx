@@ -1,6 +1,9 @@
+import crypto from 'crypto';
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 // material-ui
 import Button from '@mui/material/Button';
@@ -29,9 +32,13 @@ import EyeOutlined from '@ant-design/icons/EyeOutlined';
 import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined';
 import FirebaseSocial from './FirebaseSocial';
 
+import { AuthContext } from 'contexts/auth/AuthContext';
+
 // ============================|| JWT - LOGIN ||============================ //
 
 export default function AuthLogin({ isDemo = false }) {
+  const authContext = React.useContext(AuthContext);
+  const [isFormSubmitted, setFormIsSubmitted] = React.useState(false);
   const [checked, setChecked] = React.useState(false);
 
   const [showPassword, setShowPassword] = React.useState(false);
@@ -42,6 +49,10 @@ export default function AuthLogin({ isDemo = false }) {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
+
+  if (isFormSubmitted) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <>
@@ -55,6 +66,20 @@ export default function AuthLogin({ isDemo = false }) {
           email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
           password: Yup.string().max(255).required('Password is required')
         })}
+        onSubmit={(values, { setSubmitting }) => {
+            setSubmitting(true);
+            setFormIsSubmitted(true);
+
+            const authInfo = {
+                authKey: 'hello',
+                authEnds: Date.now() + (60 * 300),
+            };
+
+            // TODO: contant for auth info field
+            localStorage.setItem('authInfo', JSON.stringify(authInfo));
+
+            authContext.setIsAuthenticated(true);
+        }}
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
           <form noValidate onSubmit={handleSubmit}>

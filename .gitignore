@@ -108,3 +108,5 @@ dist
 .bak
 
 .yarn/
+
+.env

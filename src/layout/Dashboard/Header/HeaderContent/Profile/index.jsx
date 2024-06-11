@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useRef, useState } from 'react';
+import { useRef, useState, useContext } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -30,6 +30,8 @@ import SettingOutlined from '@ant-design/icons/SettingOutlined';
 import UserOutlined from '@ant-design/icons/UserOutlined';
 import avatar1 from 'assets/images/users/avatar-1.png';
 
+import { AuthContext } from 'contexts/auth/AuthContext';
+
 // tab panel wrapper
 function TabPanel({ children, value, index, ...other }) {
   return (
@@ -49,6 +51,7 @@ function a11yProps(index) {
 // ==============================|| HEADER CONTENT - PROFILE ||============================== //
 
 export default function Profile() {
+  const authContext = useContext(AuthContext);
   const theme = useTheme();
 
   const anchorRef = useRef(null);
@@ -71,6 +74,12 @@ export default function Profile() {
   };
 
   const iconBackColorOpen = 'grey.100';
+
+  const handleLogout = (event) => {
+    console.log(`Handle logout: ${event}`);
+    authContext.setIsAuthenticated(false);
+    localStorage.clean('authInfo');
+  };
 
   return (
     <Box sx={{ flexShrink: 0, ml: 0.75 }}>
@@ -133,7 +142,7 @@ export default function Profile() {
                       </Grid>
                       <Grid item>
                         <Tooltip title="Logout">
-                          <IconButton size="large" sx={{ color: 'text.primary' }}>
+                          <IconButton size="large" sx={{ color: 'text.primary' }} onClick={ handleLogout }>
                             <LogoutOutlined />
                           </IconButton>
                         </Tooltip>

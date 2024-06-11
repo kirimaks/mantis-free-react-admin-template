@@ -1,4 +1,7 @@
 import { lazy } from 'react';
+import { redirect } from 'react-router-dom';
+
+import { CheckAuth } from 'components/auth/CheckAuth';
 
 // project import
 import Loadable from 'components/Loadable';
@@ -8,6 +11,7 @@ const Color = Loadable(lazy(() => import('pages/component-overview/color')));
 const Typography = Loadable(lazy(() => import('pages/component-overview/typography')));
 const Shadow = Loadable(lazy(() => import('pages/component-overview/shadows')));
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/index')));
+const TestComponent = Loadable(lazy(() => import('pages/test/index')));
 
 // render - sample page
 const SamplePage = Loadable(lazy(() => import('pages/extra-pages/sample-page')));
@@ -16,36 +20,40 @@ const SamplePage = Loadable(lazy(() => import('pages/extra-pages/sample-page')))
 
 const MainRoutes = {
   path: '/',
-  element: <Dashboard />,
+  element: <CheckAuth component={ Dashboard } />,
   children: [
     {
       path: '/',
-      element: <DashboardDefault />
+      element: <CheckAuth component={ DashboardDefault } />
     },
     {
       path: 'color',
-      element: <Color />
+      element: <CheckAuth component={ Color } />
     },
     {
       path: 'dashboard',
       children: [
         {
           path: 'default',
-          element: <DashboardDefault />
+          element: <CheckAuth component={ DashboardDefault } />
         }
       ]
     },
     {
       path: 'sample-page',
-      element: <SamplePage />
+      element: <CheckAuth component={ SamplePage } />
     },
     {
       path: 'shadow',
-      element: <Shadow />
+      element: <CheckAuth component={ Shadow } />
     },
     {
       path: 'typography',
-      element: <Typography />
+      element: <CheckAuth component={ Typography } />
+    },
+    {
+      path: 'test',
+      element: <TestComponent />
     }
   ]
 };

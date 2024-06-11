@@ -9,6 +9,7 @@
     "url": "https://codedthemes.com/"
   },
   "scripts": {
+    "dev": "vite dev --host",
     "start": "vite --host",
     "build": "vite build",
     "preview": "vite preview",
@@ -31,10 +32,13 @@
     "@mui/material": "^5.15.12",
     "@mui/system": "^5.15.12",
     "@svgr/webpack": "^8.1.0",
+    "@tanstack/react-query": "^5.40.1",
     "@vitejs/plugin-react": "^4.2.1",
     "apexcharts": "^3.49.0",
     "formik": "^2.4.5",
     "framer-motion": "11.2.10",
+    "graphql": "^16.8.1",
+    "graphql-request": "^7.0.1",
     "lodash": "^4.17.21",
     "process": "^0.11.10",
     "prop-types": "^15.8.1",
