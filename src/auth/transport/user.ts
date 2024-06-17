@@ -29,14 +29,7 @@ async function createUser(payload) {
         accountName: payload.accountName,
     };  
 
-    try {
-        return await request(url, query, vars);
-
-    } catch(error) {
-        // throw new Error(getGQLErrorMessage(error));
-        console.error(error);
-    }   
-
+    return await request(url, query, vars);
 }
 
 export { createUser }

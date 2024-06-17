@@ -45,14 +45,28 @@ export default function AuthRegister() {
   // TODO:
   const mutation = useMutation({
         mutationFn: createUser,
-        onSuccess: () => {
-            console.log('ok');
-            setIsFormSubmitted(true);
-        },
-        onError: (error) => {
-            console.error(error);
-        }
   });
+
+  const formSubmit = (values, { setSubmitting, setErrors }) => {
+    setSubmitting(true);
+
+    console.log(`Form values: ${values}`);
+    mutation.mutate(
+        values, 
+        {
+            onSuccess: () => {
+                console.log('ok');
+                setIsFormSubmitted(true);
+            },
+            onError: (error) => {
+                setErrors({ submit: error.message });
+            },
+            onSettled: () => {
+                setSubmitting(false);
+            }
+        }
+    );
+  };
   // TODO:
 
   const handleMouseDownPassword = (event) => {
@@ -89,10 +103,7 @@ export default function AuthRegister() {
           password: Yup.string().max(255).required('Password is required'),
           accountName: Yup.string().max(255).required('Account name is required'),
         })}
-        onSubmit={(values, { setSubmitting }) => {
-            console.log(`Form values: ${values}`);
-            mutation.mutate(values);
-        }}
+        onSubmit={ formSubmit }
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
           <form noValidate onSubmit={handleSubmit}>
