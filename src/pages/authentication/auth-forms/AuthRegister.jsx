@@ -31,6 +31,7 @@ import EyeOutlined from '@ant-design/icons/EyeOutlined';
 import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined';
 
 import { createUser } from 'auth/transport/user';
+import { getGQLError } from 'errors/transport';
 
 // ============================|| JWT - REGISTER ||============================ //
 
@@ -50,16 +51,15 @@ export default function AuthRegister() {
   const formSubmit = (values, { setSubmitting, setErrors }) => {
     setSubmitting(true);
 
-    console.log(`Form values: ${values}`);
     mutation.mutate(
         values, 
         {
             onSuccess: () => {
-                console.log('ok');
                 setIsFormSubmitted(true);
             },
             onError: (error) => {
-                setErrors({ submit: error.message });
+                const errorMessage = getGQLError(error);
+                setErrors({ submit: errorMessage });
             },
             onSettled: () => {
                 setSubmitting(false);
