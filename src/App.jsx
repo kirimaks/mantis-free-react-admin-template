@@ -8,39 +8,16 @@ import router from 'routes';
 import ThemeCustomization from 'themes';
 
 import ScrollTop from 'components/ScrollTop';
-import { AuthContext } from 'contexts/auth/AuthContext';
+import { AuthContext, getInitialAuthContext } from 'contexts/auth/AuthContext';
+
+import { AUTH_INFO_KEY } from 'config';
 
 // ==============================|| APP - THEME, ROUTER, LOCAL ||============================== //
 
 const queryClient = new QueryClient();
 
 export default function App() {
-  const [ isAuthenticated, setIsAuthenticated] = useState(false);
-
-  // TODO:
-  useEffect(() => {
-    let authInfo = localStorage.getItem('authInfo');
-    console.log(`Auth info: ${authInfo}`);
-
-    if (authInfo) {
-        authInfo = JSON.parse(authInfo);
-        const { authKey, authEnds } = authInfo;
-
-        console.log(`AuthKey: ${authKey}`);
-        console.log(`AuthEnds: ${authEnds}`);
-
-        if (authKey && authKey.length) {
-            if (authEnds && authEnds < Date.now()) {
-                setIsAuthenticated(true);
-
-            } else {
-                setIsAuthenticated(false);
-            }
-        }
-    }
-
-  }, []);
-  // TODO:
+  const [ isAuthenticated, setIsAuthenticated] = useState(getInitialAuthContext);
 
   return (
     <ThemeCustomization>

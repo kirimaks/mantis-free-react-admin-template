@@ -32,4 +32,23 @@ async function createUser(payload) {
     return await request(url, query, vars);
 }
 
-export { createUser }
+
+async function signIn(payload) {
+    console.log(`SignIn: ${payload}`);
+
+    const url = import.meta.env.VITE_BACKEND_URL;
+    const query = gql`
+        mutation signIn($email:String! $password:String!) {
+            signIn(email: $email password: $password) { jwt_token }
+        }
+    `;
+
+    const vars = { 
+        email: payload.email, 
+        password: payload.password 
+    };  
+
+    return await request(url, query, vars);
+}
+
+export { createUser, signIn }

@@ -26,6 +26,8 @@ export default function DashboardLayout() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [downXL]);
 
+  console.log(`Render DashboardLayout()`);
+
   if (menuMasterLoading) return <Loader />;
 
   return (

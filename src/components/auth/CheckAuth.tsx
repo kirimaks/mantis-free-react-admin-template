@@ -1,7 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 
 import { AuthContext } from 'contexts/auth/AuthContext';
+
+import { AUTH_INFO_KEY } from 'config';
 
 
 const CheckAuth:React.FC = ({ component: Component }):JSX.Element => {
@@ -9,9 +11,10 @@ const CheckAuth:React.FC = ({ component: Component }):JSX.Element => {
 
     if (authContext.isAuthenticated) {
         return <Component />;
-    }
 
-    return <Navigate to="/login" replace />;
+    } else {
+        return <Navigate to="/login" replace />;
+    }
 }
 
 export { CheckAuth }

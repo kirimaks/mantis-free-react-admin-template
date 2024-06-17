@@ -31,6 +31,7 @@ import UserOutlined from '@ant-design/icons/UserOutlined';
 import avatar1 from 'assets/images/users/avatar-1.png';
 
 import { AuthContext } from 'contexts/auth/AuthContext';
+import { AUTH_INFO_KEY } from 'config';
 
 // tab panel wrapper
 function TabPanel({ children, value, index, ...other }) {
@@ -78,7 +79,7 @@ export default function Profile() {
   const handleLogout = (event) => {
     console.log(`Handle logout: ${event}`);
     authContext.setIsAuthenticated(false);
-    localStorage.clean('authInfo');
+    localStorage.clear(AUTH_INFO_KEY);
   };
 
   return (
