@@ -4,14 +4,22 @@ import { AUTH_INFO_KEY } from 'config';
 
 const AuthContext = createContext();
 
-function getInitialAuthContext():boolean {
+type AuthInfo = {
+    authKey: string;
+    authEnds: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+};
+
+function getInitialAuthContext(): AuthInfo {
     let authInfo = window.localStorage.getItem(AUTH_INFO_KEY);
     console.log(`Auth info: ${authInfo}, ${typeof authInfo}`);
 
     if (authInfo && typeof authInfo === 'string') {
         try {
             authInfo = JSON.parse(authInfo);
-            const { authKey, authEnds } = authInfo;
+            const { authKey, authEnds, firstName, lastName, email } = authInfo;
 
             console.log(`AuthKey: ${authKey}, ${typeof authKey}`);
             console.log(`AuthEnds: ${authEnds}, ${typeof authEnds}`);
@@ -19,9 +27,9 @@ function getInitialAuthContext():boolean {
 
             if (authKey && authKey.length) {
                 if (authEnds && authEnds > Date.now()) {
-                    // console.log('Set as authenticated');
-                    // authContext.setIsAuthenticated(true);
-                    return true;
+                    return {
+                        authKey, authEnds, firstName, lastName, email
+                    };
                 }
             }
 
@@ -30,7 +38,7 @@ function getInitialAuthContext():boolean {
         }
     }
 
-    return false;
+    return {};
 }
 
 export { AuthContext, getInitialAuthContext }

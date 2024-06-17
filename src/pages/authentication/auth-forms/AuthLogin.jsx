@@ -62,19 +62,31 @@ export default function AuthLogin({ isDemo = false }) {
 
   const submitForm = (values, { setSubmitting, setErrors }) => {
     setSubmitting(true);
+
     mutation.mutate(
         values,
         {
             onSuccess: (values) => {
-                console.log(`Values: ${JSON.stringify(values)}`);
-                const authInfo = {
-                    authKey: values['signIn']['jwt_token'],
-                    authEnds: Date.now() + (60000 * 5), // TODO: return from api
-                };
-                window.localStorage.setItem(AUTH_INFO_KEY, JSON.stringify(authInfo));
 
-                authContext.setIsAuthenticated(true);
-                setFormIsSubmitted(true);  // TODO: should be not required
+                const token = values.signIn.jwtToken;
+
+                if (token && token.length > 12) {
+                    const authInfo = {
+                        authKey: token,
+                        authEnds: Date.now() + (60000 * 5), // TODO: return from api
+                        firstName: values.signIn.user.firstName,
+                        lastName: values.signIn.user.lastName,
+                        email: values.signIn.user.email,
+                    };
+
+                    window.localStorage.setItem(AUTH_INFO_KEY, JSON.stringify(authInfo));
+
+                    authContext.setAuthInfo(authInfo);
+                    setFormIsSubmitted(true);
+
+                } else {
+                    throw new Error('Bad response from server');
+                }
             },
             onError: (error) => {
                 const errorMessage = getGQLError(error);

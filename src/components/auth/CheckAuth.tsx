@@ -9,7 +9,10 @@ import { AUTH_INFO_KEY } from 'config';
 const CheckAuth:React.FC = ({ component: Component }):JSX.Element => {
     const authContext = useContext(AuthContext);
 
-    if (authContext.isAuthenticated) {
+    console.log(`Check auth: ${JSON.stringify(authContext)}`);
+
+    // TODO: check auth expiry
+    if (authContext.authInfo.authKey) {
         return <Component />;
 
     } else {

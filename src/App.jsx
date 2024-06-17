@@ -17,13 +17,13 @@ import { AUTH_INFO_KEY } from 'config';
 const queryClient = new QueryClient();
 
 export default function App() {
-  const [ isAuthenticated, setIsAuthenticated] = useState(getInitialAuthContext);
+  const [ authInfo, setAuthInfo ] = useState(getInitialAuthContext);
 
   return (
     <ThemeCustomization>
       <ScrollTop>
         <QueryClientProvider client={ queryClient }>
-            <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
+            <AuthContext.Provider value={{ authInfo, setAuthInfo }}>
                 <RouterProvider router={ router } />
             </AuthContext.Provider>
         </QueryClientProvider>

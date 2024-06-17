@@ -78,7 +78,7 @@ export default function Profile() {
 
   const handleLogout = (event) => {
     console.log(`Handle logout: ${event}`);
-    authContext.setIsAuthenticated(false);
+    authContext.setAuthInfo({});
     localStorage.clear(AUTH_INFO_KEY);
   };
 
@@ -101,7 +101,7 @@ export default function Profile() {
         <Stack direction="row" spacing={1.25} alignItems="center" sx={{ p: 0.5 }}>
           <Avatar alt="profile user" src={avatar1} size="sm" />
           <Typography variant="subtitle1" sx={{ textTransform: 'capitalize' }}>
-            John Doe
+            { authContext.authInfo.firstName } { authContext.authInfo.lastName }
           </Typography>
         </Stack>
       </ButtonBase>
@@ -134,9 +134,9 @@ export default function Profile() {
                         <Stack direction="row" spacing={1.25} alignItems="center">
                           <Avatar alt="profile user" src={avatar1} sx={{ width: 32, height: 32 }} />
                           <Stack>
-                            <Typography variant="h6">John Doe</Typography>
+                            <Typography variant="h6">{ authContext.authInfo.firstName } { authContext.authInfo.lastName }</Typography>
                             <Typography variant="body2" color="text.secondary">
-                              UI/UX Designer
+                              { authContext.authInfo.email }
                             </Typography>
                           </Stack>
                         </Stack>
