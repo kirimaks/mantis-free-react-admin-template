@@ -1,5 +1,7 @@
 import { gql, request } from 'graphql-request';
 
+import { getGQLError } from 'errors/transport';
+
 
 async function createUser(payload) {
     console.log(`Creating user: ${JSON.stringify(payload)}`);
@@ -29,7 +31,12 @@ async function createUser(payload) {
         accountName: payload.accountName,
     };  
 
-    return await request(url, query, vars);
+    try {
+        return await request(url, query, vars);
+
+    } catch(error) {
+        throw getGQLError(error);
+    }
 }
 
 
@@ -50,7 +57,12 @@ async function signIn(payload) {
         password: payload.password 
     };  
 
-    return await request(url, query, vars);
+    try {
+        return await request(url, query, vars);
+
+    } catch(error) {
+        throw getGQLError(error);
+    }
 }
 
 export { createUser, signIn }

@@ -10,8 +10,6 @@ import ThemeCustomization from 'themes';
 import ScrollTop from 'components/ScrollTop';
 import { AuthContext, getInitialAuthContext } from 'contexts/auth/AuthContext';
 
-import { AUTH_INFO_KEY } from 'config';
-
 // ==============================|| APP - THEME, ROUTER, LOCAL ||============================== //
 
 const queryClient = new QueryClient();

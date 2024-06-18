@@ -58,8 +58,7 @@ export default function AuthRegister() {
                 setIsFormSubmitted(true);
             },
             onError: (error) => {
-                const errorMessage = getGQLError(error);
-                setErrors({ submit: errorMessage });
+                setErrors({ submit: error.message });
             },
             onSettled: () => {
                 setSubmitting(false);

@@ -1,20 +1,37 @@
 import { ClientError } from 'graphql-request'
 
 
-function getGQLError(gqlError:unknown):string {
+class UnauthorizedError extends Error {
+    constructor(message:string) {
+        super(message);
+        this.message = message;
+        this.name = 'UnauthorizedError';
+    }
+}
+
+
+function getGQLError(gqlError:unknown):Error {
     console.log(`GQL Error: ${gqlError}`);
 
     if (gqlError instanceof ClientError) {
         if (gqlError.response.errors) {
-            return gqlError.response.errors[0].message;
+
+            for (const error of gqlError.response.errors) {
+                if (error.message.match(/unauthorized/i)) {
+                    console.log('Unauthorized error');
+                    return new UnauthorizedError(error.message);
+                }
+            }
+
+            return new Error(gqlError.response.errors[0].message);
         }
     }
 
     if (gqlError instanceof Error) {
-        return gqlError.message;
+        return new Error(gqlError.message);
     }
 
-    return 'No response from server';
+    return new Error('No response from server');
 }
 
-export { getGQLError }
+export { getGQLError, UnauthorizedError }

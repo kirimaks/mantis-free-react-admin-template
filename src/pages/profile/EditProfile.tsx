@@ -1,5 +1,8 @@
+import ProfileEditForm from 'components/profile/EditProfileForm';
+
+
 export default function ProfileComponent() {
     return (
-        <h2>Edit profile</h2>
+        <ProfileEditForm />
     );
 }

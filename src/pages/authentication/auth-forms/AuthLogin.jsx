@@ -32,7 +32,7 @@ import EyeOutlined from '@ant-design/icons/EyeOutlined';
 import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined';
 import FirebaseSocial from './FirebaseSocial';
 
-import { AuthContext } from 'contexts/auth/AuthContext';
+import { AuthContext, setAuthContext } from 'contexts/auth/AuthContext';
 
 import { signIn } from 'auth/transport/user';
 import { getGQLError } from 'errors/transport';
@@ -67,30 +67,11 @@ export default function AuthLogin({ isDemo = false }) {
         values,
         {
             onSuccess: (values) => {
-
-                const token = values.signIn.jwtToken;
-
-                if (token && token.length > 12) {
-                    const authInfo = {
-                        authKey: token,
-                        authEnds: Date.now() + (60000 * 5), // TODO: return from api
-                        firstName: values.signIn.user.firstName,
-                        lastName: values.signIn.user.lastName,
-                        email: values.signIn.user.email,
-                    };
-
-                    window.localStorage.setItem(AUTH_INFO_KEY, JSON.stringify(authInfo));
-
-                    authContext.setAuthInfo(authInfo);
-                    setFormIsSubmitted(true);
-
-                } else {
-                    throw new Error('Bad response from server');
-                }
+                setAuthContext(authContext, values);
+                setFormIsSubmitted(true);
             },
             onError: (error) => {
-                const errorMessage = getGQLError(error);
-                setErrors({ submit: errorMessage });
+                setErrors({ submit: error.message });
             },
             onSettled: () => {
                 setSubmitting(false);
