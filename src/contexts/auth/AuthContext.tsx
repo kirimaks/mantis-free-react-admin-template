@@ -75,6 +75,8 @@ function setAuthContext(authContext:{setAuthInfo: () => void}, logInResponse:Log
 
 
 function resetAuthContext(authContext: { setAuthInfo: () => void }):void {
+    console.warn('Reset auth');
+
     authContext.setAuthInfo({});
     localStorage.clear(AUTH_INFO_KEY);
 }

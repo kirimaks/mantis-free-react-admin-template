@@ -4,11 +4,13 @@ import { createBrowserRouter } from 'react-router-dom';
 import MainRoutes from './MainRoutes';
 import LoginRoutes from './LoginRoutes';
 import ProfileRoutes from './ProfileRoutes';
+import TagsRoutes from './TagsRoutes';
+import TransactionsRoutes from './TransactionsRoutes';
 
 // ==============================|| ROUTING RENDER ||============================== //
 
 const router = createBrowserRouter(
-    [MainRoutes, LoginRoutes, ProfileRoutes], 
+    [MainRoutes, LoginRoutes, ProfileRoutes, TagsRoutes, TransactionsRoutes], 
     { 
         basename: import.meta.env.VITE_APP_BASE_NAME 
     }

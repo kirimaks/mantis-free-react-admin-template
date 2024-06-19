@@ -5,6 +5,7 @@ import { Outlet } from 'react-router-dom';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 // project import
 import Drawer from './Drawer';

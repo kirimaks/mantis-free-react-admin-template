@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { LockOutlined } from '@ant-design/icons';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useQuery, useMutation, QueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, QueryClient } from '@tanstack/react-query';
 
 import { getProfileInfo, updateProfileInfo } from 'profile/transport';
 import { AuthContext, resetAuthContext } from 'contexts/auth/AuthContext';
