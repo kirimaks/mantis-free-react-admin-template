@@ -119,15 +119,110 @@ function DeleteTagGroupComponent({ tagGroup }):JSX.Element {
 }
 
 
-function CreateNewTagComponent({ tagGroup }):JSX.Element {
-    const handleCreateTag = (event) => {
-        event.preventDefault();
+function CreateNewTagDialog(props):JSX.Element {
+    const authContext = useContext(AuthContext);
+    const queryClient = useQueryClient();
+
+    const { 
+        tagGroup, 
+        isNewTagFormOpened, 
+        setNewTagFormOpened,
+        newTagName,
+        setNewTagName,
+        newTagIcon,
+        setNewTagIcon,
+    } = props;
+
+    const [ isTagNameError, setTagNameErorr ] = useState(false);
+    const [ isTagIconError, setTagIconError ] = useState(false);
+    const [ formError, setFormError ] = useState<null|string>(null);
+
+    const handleTagNameChange = (event) => {
+        setNewTagName(event.target.value);
+    };
+
+    const handleTagIconChange = (event:React.ChangeEvent<HTMLInputElement>, newValue: string | null) => {
+
+        if (newValue) {
+            setNewTagIcon(newValue.label);
+
+        } else {
+            setNewTagIcon('');
+        }
+    };
+
+
+    const newTagMutation = useMutation({
+        mutationFn: (payload) => createNewTag(authContext.authInfo.authKey, payload),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [TAGS_QUERY_CACHE_KEY] });
+        },
+        onError: (error) => {
+            if (error instanceof UnauthorizedError) {
+                resetAuthContext(authContext);
+            }
+            setFormError(error.message);
+        }
+    });
+
+    const createNewTagClick = (event) => {
+        newTagMutation.mutate({ newTagName, newTagIcon });
     };
 
     return (
-        <IconButton color="secondary" onClick={ handleCreateTag }>
-            <AddCircleIcon />
-        </IconButton>
+        <Dialog onClose={ () => setNewTagFormOpened(false) } open={ isNewTagFormOpened }>
+            <Box sx={{ padding: "10px" }}>
+                <Stack direction="column" spacing={ 2 } alignItems="stretch">
+                    <Typography variant="h3">Create new tag in <b>[{ tagGroup.name }]</b></Typography>
+                    <Box>
+                        <TextField
+                            error={ isTagNameError }
+                            label="Tag name"
+                            variant="outlined"
+                            value={ newTagName }
+                            onChange={ handleTagNameChange }
+                            fullWidth
+                        />
+                    </Box>
+                    <Box>
+                        <Autocomplete
+                            options={ FA_ICONS }
+                            renderInput={
+                                (params) => <TextField error={ isTagIconError } { ...params } label="Tag icon" />
+                            }
+                            onChange={ handleTagIconChange }
+                        />
+                    </Box>
+                    <LoadingButton loading={ newTagMutation.isPending } color="success" variant="outlined" onClick={ createNewTagClick }>Create</LoadingButton>
+                </Stack>
+            </Box>
+        </Dialog>
+    );
+}
+
+
+function CreateNewTagComponent({ tagGroup }):JSX.Element {
+    const [ isNewTagFormOpened, setNewTagFormOpened ] = useState(false);
+    const [ newTagName, setNewTagName ] = useState('');
+    const [ newTagIcon, setNewTagIcon ] = useState('');
+
+    const handleCreateTag = (event) => {
+        event.preventDefault();
+        setNewTagFormOpened(!isNewTagFormOpened);
+    };
+
+    return (
+        <>
+            <Tooltip title="Add tags to group">
+                <IconButton color="secondary" onClick={ handleCreateTag }>
+                    <AddCircleIcon />
+                </IconButton>
+            </Tooltip>
+            <CreateNewTagDialog {...{ 
+                tagGroup, isNewTagFormOpened, setNewTagFormOpened, 
+                newTagName, setNewTagName, newTagIcon, setNewTagIcon
+            }} />
+        </>
     );
 }
 
@@ -232,7 +327,7 @@ function CreateTagGroupDialog(props):JSX.Element {
         setFormError(null);
     };
 
-    const handleTagGroupIconChange = (evnet:React.ChangeEvent<HTMLInputElement>, newValue: string | null) => {
+    const handleTagGroupIconChange = (event:React.ChangeEvent<HTMLInputElement>, newValue: string | null) => {
 
         if (newValue) {
             setNewTagGroupIcon(newValue.label);
