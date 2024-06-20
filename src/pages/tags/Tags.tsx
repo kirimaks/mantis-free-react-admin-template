@@ -1,30 +1,25 @@
 import { useContext, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import ListSubheader from '@mui/material/ListSubheader';
-import List from '@mui/material/List';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import ListItem from '@mui/material/ListItem';
+
+import { ListSubheader, List, ListItemButton, ListItemIcon, ListItemText, ListItem } from '@mui/material';
+import { ExpandLess, ExpandMore } from '@mui/icons-material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText } from '@mui/material';
+import { Button, Alert } from '@mui/material';
+import LoadingButton from '@mui/lab/LoadingButton';
+
 import Collapse from '@mui/material/Collapse';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
 import Icon from '@mui/material/Icon';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from  '@mui/material/Stack';
 import Container from '@mui/material/Container';
-import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
 import TextField from '@mui/material/TextField';
-import { Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-
 
 import { AuthContext, resetAuthContext } from 'contexts/auth/AuthContext';
 import { UnauthorizedError } from 'errors/transport';
@@ -91,10 +86,8 @@ function DeleteTagGroupConfirmation({ tagGroup, isConfirmationOpened, setIsConfi
               </DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Button onClick={ handleClose }>Disagree</Button>
-              <Button onClick={ handleDelete } autoFocus>
-                Agree
-              </Button>
+              <Button variant="contained" color="secondary" onClick={ handleClose }>Cancel</Button>
+              <LoadingButton loading={ deleteTagGroupMutation.isPending } variant="contained" color="error" onClick={ handleDelete }>Delete</LoadingButton>
             </DialogActions>
         </Dialog>
     );
@@ -194,16 +187,23 @@ function TagsListComponent({ tags }):JSX.Element {
 }
 
 
-function CreateTagGroupDialog({ isNewTagGroupDialogOpened, setIsNewTagGroupDialogOpened }):JSX.Element {
+function CreateTagGroupDialog(props):JSX.Element {
     const authContext = useContext(AuthContext);
     const queryClient = useQueryClient();
 
-    const [ newTagGroupName, setNewTagGroupName ] = useState('');
-    const [ newTagGroupIcon, setNewTagGroupIcon ] = useState('');
+    const { 
+        isNewTagGroupDialogOpened,
+        setIsNewTagGroupDialogOpened,
+        newTagGroupName,
+        setNewTagGroupName,
+        newTagGroupIcon,
+        setNewTagGroupIcon
+    } = props;
+
     const [ isTagGroupNameError, setIsTagNameError ] = useState(false);
     const [ isTagGroupIconError, setIsTagGroupIconError ] = useState(false);
+    const [ formError, setFormError ] = useState<null|string>(null);
     
-
     const newTagGroupMutation = useMutation({
         mutationFn: (values) => createNewTagGroup(authContext.authInfo.authKey, values),
         onSuccess: () => {
@@ -215,6 +215,7 @@ function CreateTagGroupDialog({ isNewTagGroupDialogOpened, setIsNewTagGroupDialo
             if (error instanceof UnauthorizedError) {
                 resetAuthContext(authContext);
             }
+            setFormError(error.message);
         }
     });
 
@@ -224,12 +225,15 @@ function CreateTagGroupDialog({ isNewTagGroupDialogOpened, setIsNewTagGroupDialo
 
     const handleTagGroupNameChange = (event:React.ChangeEvent<HTMLInputElement>) => {
         setNewTagGroupName(event.target.value);
-        if (event.target.value.length > 3 && event.target.value.length < 100) {
+        if (event.target.value.length >= 3 && event.target.value.length < 100) {
             setIsTagNameError(false);
         }
+
+        setFormError(null);
     };
 
     const handleTagGroupIconChange = (evnet:React.ChangeEvent<HTMLInputElement>, newValue: string | null) => {
+
         if (newValue) {
             setNewTagGroupIcon(newValue.label);
             if (newValue.label.length > 0 && newValue.label.length < 100) {
@@ -239,9 +243,12 @@ function CreateTagGroupDialog({ isNewTagGroupDialogOpened, setIsNewTagGroupDialo
             setNewTagGroupIcon('');
         }
 
+        setFormError(null);
     };
 
     const createNewTagGroupClick = (event) => {
+        setFormError(null);
+
         if (newTagGroupName.length <= 3 || newTagGroupName.length > 100) {
             setIsTagNameError(true);
 
@@ -265,15 +272,16 @@ function CreateTagGroupDialog({ isNewTagGroupDialogOpened, setIsNewTagGroupDialo
     return (
         <Dialog onClose={ handleDialogClose } open={ isNewTagGroupDialogOpened }>
             <Box sx={{ padding: "10px" }}>
-                <Stack spacing={ 2 }>
+                <Stack direction="column" spacing={ 2 } alignItems="stretch">
                     <DialogTitle>Create new tag group</DialogTitle>
-                    <Box >
+                    <Box>
                         <TextField 
                             error={ isTagGroupNameError } 
                             label="Tag group name" 
                             variant="outlined" 
                             value={ newTagGroupName} 
                             onChange={ handleTagGroupNameChange } 
+                            fullWidth
                         />
                     </Box>
                     <Box>
@@ -285,7 +293,10 @@ function CreateTagGroupDialog({ isNewTagGroupDialogOpened, setIsNewTagGroupDialo
                             onChange={ handleTagGroupIconChange }
                         />
                     </Box>
-                    <Button color="success" variant="outlined" onClick={ createNewTagGroupClick }>Create</Button>
+                    <Box>
+                        { formError ? <Alert severity="error">{ formError }</Alert> : null }
+                    </Box>
+                    <LoadingButton loading={ newTagGroupMutation.isPending } color="success" variant="outlined" onClick={ createNewTagGroupClick }>Create</LoadingButton>
                 </Stack>
             </Box>
         </Dialog>
@@ -294,10 +305,22 @@ function CreateTagGroupDialog({ isNewTagGroupDialogOpened, setIsNewTagGroupDialo
 
 
 function CreateNewTagGroupComponent():JSX.Element {
-    const [isNewTagGroupDialogOpened, setIsNewTagGroupDialogOpened] = useState(false);
-    const dialogProps = { isNewTagGroupDialogOpened, setIsNewTagGroupDialogOpened };
+    const [ isNewTagGroupDialogOpened, setIsNewTagGroupDialogOpened ] = useState(false);
+    const [ newTagGroupName, setNewTagGroupName ] = useState('');
+    const [ newTagGroupIcon, setNewTagGroupIcon ] = useState('');
+
+    const dialogProps = {
+        isNewTagGroupDialogOpened,
+        setIsNewTagGroupDialogOpened,
+        newTagGroupName,
+        setNewTagGroupName,
+        newTagGroupIcon,
+        setNewTagGroupIcon
+    };
 
     const createNewTagGroupClick = (event) => {
+        setNewTagGroupName('');
+        setNewTagGroupIcon('');
         setIsNewTagGroupDialogOpened(!isNewTagGroupDialogOpened);
     };
 
