@@ -1,6 +1,12 @@
 import { useState, useEffect } from 'react';
 import { RouterProvider } from 'react-router-dom';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
 
 
 // project import
@@ -25,6 +31,7 @@ export default function App() {
             <AuthContext.Provider value={{ authInfo, setAuthInfo }}>
                 <RouterProvider router={ router } />
             </AuthContext.Provider>
+            <ReactQueryDevtools initialOpen={ false } />
         </QueryClientProvider>
       </ScrollTop>
     </ThemeCustomization>
